@@ -1,3 +1,4 @@
-import "./styles.scss";
+import './styles.scss'
+import valid from './valid.js';
 
-console.log("Hello World!");
+valid();
