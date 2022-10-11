@@ -1,15 +1,18 @@
 import onChange from 'on-change';
-import keyBy from 'lodash/keyBy.js';
 import * as yup from 'yup';
 import render from './render.js';
 
 const added = [];
 
+yup.setLocale({
+  string: {
+    url: 'Ссылка должна быть валидным URL',
+    notOneOf: 'RSS уже существует',
+  },
+});
+
 const schema = yup.object().shape({
-  website: yup
-    .string()
-    .url()
-    .notOneOf(added),
+  website: yup.string().url().notOneOf(added),
 });
 
 const validate = (field) => {
@@ -41,7 +44,7 @@ const valid = () => {
 
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
-
+    added.push(elements.field.textContent);
     state.form.field.website = elements.field.textContent;
     const error = validate(state.form.field);
     console.log(error);
