@@ -1,32 +1,29 @@
-const renderError = (elements, error, prevError) => {
-  const validFeedback = 'RSS успешно загружен';
-  if (prevError === null && error === null) {
-    elements.feedback.textContent = validFeedback;
+const renderError = (elements, error) => {
+  if (error === null) {
     return;
-  }
-
-  if (prevError !== null && error === null) {
-    elements.field.classList.remove('is-invalid');
-    elements.feedback.classList.remove('text-danger');
-    elements.feedback.classList.add('text-success');
-    elements.feedback.textContent = validFeedback;
-    return;
-  }
-
-  if (prevError !== null && error !== null) {
+  } else {
     elements.feedback.textContent = error;
-    return;
   }
-
-  elements.field.classList.add('is-invalid');
-  elements.feedback.classList.remove('text-success');
-  elements.feedback.classList.add('text-danger');
-  elements.feedback.textContent = error;
 };
 
-const render = (elements) => (path, value, prevValue) => {
+const renderProccess = (elements, processState) => {
+  if (processState === 'error') {
+    elements.field.classList.add('is-invalid');
+    elements.feedback.classList.replace('text-success', 'text-danger');
+  }
+  if (processState === 'added') {
+    elements.field.classList.remove('is-invalid');
+    elements.feedback.classList.replace('text-danger', 'text-success');
+    elements.feedback.textContent = 'RSS успешно загружен';
+  }
+}
+
+const render = (elements) => (path, value) => {
   if (path === 'form.error') {
-    renderError(elements, value, prevValue);
+    renderError(elements, value);
+  }
+  if (path === 'processState') {
+    renderProccess(elements, value);
   }
 };
 

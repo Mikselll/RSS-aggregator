@@ -11,8 +11,8 @@ const valid = () => {
   };
 
   const state = onChange({
+    processState: 'filling',
     form: {
-      valid: true,
       field: '',
       error: null,
       feeds: [],
@@ -20,9 +20,11 @@ const valid = () => {
   }, render(elements));
 
   yup.setLocale({
+    mixed: {
+      notOneOf: 'RSS уже существует',
+    },
     string: {
       url: 'Ссылка должна быть валидным URL',
-      notOneOf: 'RSS уже существует'
     },
   });
   
@@ -33,14 +35,16 @@ const valid = () => {
 
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
-    validate(elements.field.textContent, state.form.feeds)
+    state.processState = 'filling';
+    validate(elements.field.value, state.form.feeds)
     .then((url) => {
-      state.form.valid = true;
+      state.processState = 'added';
       state.form.error = null;
       state.form.field = url;
       state.form.feeds.push(url);
     })
     .catch((error) => {
+      state.processState = 'error';
       state.form.error = error.message;
       state.form.valid = false;
     })
