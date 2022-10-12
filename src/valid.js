@@ -2,28 +2,6 @@ import onChange from 'on-change';
 import * as yup from 'yup';
 import render from './render.js';
 
-const added = [];
-
-yup.setLocale({
-  string: {
-    url: 'Ссылка должна быть валидным URL',
-    notOneOf: 'RSS уже существует',
-  },
-});
-
-const schema = yup.object().shape({
-  website: yup.string().url().notOneOf(added),
-});
-
-const validate = (field) => {
-  try {
-    schema.validateSync(field, { abortEarly: false });
-    return '';
-  } catch (e) {
-    return e.message;
-  }
-};
-
 const valid = () => {
   const elements = {
     form: document.querySelector('.rss-form'),
@@ -35,21 +13,37 @@ const valid = () => {
   const state = onChange({
     form: {
       valid: true,
-      field: {
-        website: '',
-      },
-      error: '',
+      field: '',
+      error: null,
+      feeds: [],
     },
   }, render(elements));
 
+  yup.setLocale({
+    string: {
+      url: 'Ссылка должна быть валидным URL',
+      notOneOf: 'RSS уже существует'
+    },
+  });
+  
+  const validate = (url, feeds) => {
+    const schema = yup.string().required().url().notOneOf(feeds);
+    return schema.validate(url);
+  };
+
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
-    added.push(elements.field.textContent);
-    state.form.field.website = elements.field.textContent;
-    const error = validate(state.form.field);
-    console.log(error);
-    state.form.error = error;
-    state.form.valid = state.form.error === '';
+    validate(elements.field.textContent, state.form.feeds)
+    .then((url) => {
+      state.form.valid = true;
+      state.form.error = null;
+      state.form.field = url;
+      state.form.feeds.push(url);
+    })
+    .catch((error) => {
+      state.form.error = error.message;
+      state.form.valid = false;
+    })
   });
 };
 
