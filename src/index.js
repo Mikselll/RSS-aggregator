@@ -1,4 +1,4 @@
 import './styles.scss';
-import valid from './valid.js';
+import app from './app.js';
 
-valid();
+app();
