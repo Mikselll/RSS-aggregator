@@ -2,7 +2,9 @@ import onChange from 'on-change';
 import * as yup from 'yup';
 import i18next from 'i18next';
 import render from './render.js';
+import renderModal from './renderModal.js';
 import loader from './loader.js';
+import updater from './updater.js';
 import resources from './locales/index.js';
 
 yup.setLocale({
@@ -15,8 +17,8 @@ yup.setLocale({
   },
 });
 
-const validate = (url, feeds) => {
-  const schema = yup.string().required().url().notOneOf(feeds);
+const validate = (url, links) => {
+  const schema = yup.string().required().url().notOneOf(links);
   return schema.validate(url);
 };
 
@@ -35,26 +37,33 @@ const app = () => {
     feedback: document.querySelector('.feedback'),
     feeds: document.querySelector('.feeds'),
     posts: document.querySelector('.posts'),
+    modalTitle: document.querySelector('.modal-title'),
+    modalBody: document.querySelector('.modal-body'),
+    modalLink: document.querySelector('.full-article'),
+  };
+
+  const UIstate = {
+    currentPostId: null,
+    postsId: [],
   };
 
   const state = onChange({
     form: {
       processState: 'filling',
-      field: '',
+      links: [],
       error: null,
     },
     feeds: [],
     posts: [],
-  }, render(elements, i18n));
+  }, render(elements, i18n, UIstate));
 
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
     state.form.processState = 'filling';
-    validate(elements.field.value, state.feeds)
+    validate(elements.field.value, state.form.links)
       .then((url) => {
         state.form.processState = 'loading';
         state.form.error = null;
-        state.form.field = url;
         loader(url, state);
       })
       .catch((error) => {
@@ -62,6 +71,15 @@ const app = () => {
         state.form.error = error.message;
       });
   });
+
+  elements.posts.addEventListener('click', (e) => {
+    const { id } = e.target.dataset;
+    UIstate.postsId.push(id);
+    UIstate.currentPostId = id;
+    renderModal(state, UIstate, elements);
+  });
+
+  updater(state);
 };
 
 export default app;
