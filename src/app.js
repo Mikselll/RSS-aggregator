@@ -60,8 +60,10 @@ const app = () => {
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
     state.form.processState = 'filling';
+    console.log(state.form.links);
     validate(elements.field.value, state.form.links)
       .then((url) => {
+        elements.field.value = '';
         state.form.processState = 'loading';
         state.form.error = null;
         loader(url, state);
