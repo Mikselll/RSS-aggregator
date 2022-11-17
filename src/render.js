@@ -100,17 +100,19 @@ const renderPosts = (elements, i18n, posts, UIstate) => {
 };
 
 const render = (elements, i18n, UIstate) => (path, value) => {
-  if (path === 'form.error') {
-    renderError(elements, i18n, value);
-  }
-  if (path === 'form.processState') {
-    renderProccess(elements, i18n, value);
-  }
-  if (path === 'feeds') {
-    renderFeeds(elements, i18n, value);
-  }
-  if (path === 'posts') {
-    renderPosts(elements, i18n, value, UIstate);
+  switch (path) {
+    case 'form.error':
+      renderError(elements, i18n, value);
+      break;
+    case 'form.processState':
+      renderProccess(elements, i18n, value);
+      break;
+    case 'feeds':
+      renderFeeds(elements, i18n, value);
+      break;
+    case 'posts':
+      renderPosts(elements, i18n, value, UIstate);
+      break;
   }
 };
 

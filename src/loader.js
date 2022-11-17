@@ -9,13 +9,17 @@ const loader = (url, state) => {
     .then((responce) => {
       const { feed, posts } = parsing(responce);
       feed.id = uniqueId();
-      posts.forEach((post) => post.id = uniqueId());
+      posts.forEach((post) => {
+        post.id = uniqueId();
+        return;
+      });
       state.form.links.push(url);
       state.feeds.push(feed);
       state.posts.push(posts);
       state.form.processState = 'added';
     })
     .catch((error) => {
+      state.form.processState = 'error';
       if (error.isParsingError) {
         state.form.error = 'parsingError';
       } else if (error.isAxiosError) {
