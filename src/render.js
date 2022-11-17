@@ -33,11 +33,10 @@ const buildList = (element, name) => {
 
   const h2 = document.createElement('h2');
   h2.classList.add('card-title', 'h4');
+  h2.textContent = name;
 
   const ul = document.createElement('ul');
   ul.classList.add('list-group', 'border-0', 'rounded-0');
-
-  h2.textContent = name;
 
   element.append(mainDiv);
   mainDiv.append(divForH2, ul);
@@ -55,11 +54,10 @@ const renderFeeds = (elements, i18n, feeds) => {
 
     const h3 = document.createElement('h3');
     h3.classList.add('h6', 'm-0');
+    h3.textContent = title;
 
     const p = document.createElement('p');
     p.classList.add('m-0', 'small', 'text-black-50');
-
-    h3.textContent = title;
     p.textContent = description;
 
     ul.append(li);
@@ -81,7 +79,7 @@ const renderPosts = (elements, i18n, posts, UIstate) => {
     link.setAttribute('data-id', `${post.id}`);
     link.setAttribute('target', '_blank');
     link.setAttribute('rel', 'noopener noreferrer');
-
+    link.textContent = post.title;
     if (UIstate.postsId.includes(post.id)) {
       link.classList.add('fw-normal', 'link-secondary');
     } else {
@@ -94,8 +92,6 @@ const renderPosts = (elements, i18n, posts, UIstate) => {
     button.setAttribute('data-id', `${post.id}`);
     button.setAttribute('data-bs-toggle', 'modal');
     button.setAttribute('data-bs-target', '#modal');
-
-    link.textContent = post.title;
     button.textContent = i18n.t('btn');
 
     ul.append(li);
