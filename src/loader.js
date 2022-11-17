@@ -7,20 +7,18 @@ const loader = (url, state) => {
   axios
     .get(getUrl(url))
     .then((responce) => {
-      state.form.processState = 'added';
       const { feed, posts } = parsing(responce);
       feed.id = uniqueId();
       posts.forEach((post) => post.id = uniqueId());
       state.form.links.push(url);
       state.feeds.push(feed);
       state.posts.push(posts);
+      state.form.processState = 'added';
     })
     .catch((error) => {
-      state.form.processState = 'error';
       if (error.isParsingError) {
         state.form.error = 'parsingError';
-      }
-      if (error.isAxiosError) {
+      } else if (error.isAxiosError) {
         state.form.error = 'networkError';
       } else {
         state.form.error = 'unknown';
