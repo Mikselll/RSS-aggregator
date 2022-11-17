@@ -113,6 +113,8 @@ const render = (elements, i18n, UIstate) => (path, value) => {
     case 'posts':
       renderPosts(elements, i18n, value, UIstate);
       break;
+    default:
+      break;
   }
 };
 

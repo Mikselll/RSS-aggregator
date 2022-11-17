@@ -11,7 +11,6 @@ const loader = (url, state) => {
       feed.id = uniqueId();
       posts.forEach((post) => {
         post.id = uniqueId();
-        return;
       });
       state.form.links.push(url);
       state.feeds.push(feed);
