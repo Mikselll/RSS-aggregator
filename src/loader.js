@@ -1,6 +1,6 @@
 import axios from 'axios';
-import uniqueId from 'lodash';
-import parser from './parser.js';
+import { uniqueId } from 'lodash';
+import parsing from './parser.js';
 import getUrl from './getUrl.js';
 
 const loader = (url, state) => {
@@ -8,9 +8,10 @@ const loader = (url, state) => {
     .get(getUrl(url))
     .then((responce) => {
       state.form.processState = 'added';
-      const { feed, posts } = parser(responce);
+      const { feed, posts } = parsing(responce);
       feed.id = uniqueId();
-      posts.id = uniqueId();
+      posts.forEach((post) => post.id = uniqueId());
+      state.form.links.push(url);
       state.feeds.push(feed);
       state.posts.push(posts);
     })
@@ -21,6 +22,8 @@ const loader = (url, state) => {
       }
       if (error.isAxiosError) {
         state.form.error = 'networkError';
+      } else {
+        state.form.error = 'unknown';
       }
     });
 };

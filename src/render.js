@@ -67,7 +67,7 @@ const renderFeeds = (elements, i18n, feeds) => {
   });
 };
 
-const renderPosts = (elements, i18n, posts) => {
+const renderPosts = (elements, i18n, posts, UIstate) => {
   elements.posts.textContent = '';
   buildList(elements.posts, i18n.t('posts'));
   const ul = elements.posts.querySelector('.list-group');
@@ -81,6 +81,12 @@ const renderPosts = (elements, i18n, posts) => {
     link.setAttribute('data-id', `${post.id}`);
     link.setAttribute('target', '_blank');
     link.setAttribute('rel', 'noopener noreferrer');
+
+    if (UIstate.postsId.includes(post.id)) {
+      link.classList.add('fw-normal', 'link-secondary');
+    } else {
+      link.classList.add('fw-bold');
+    }
 
     const button = document.createElement('button');
     button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
@@ -97,7 +103,7 @@ const renderPosts = (elements, i18n, posts) => {
   });
 };
 
-const render = (elements, i18n) => (path, value) => {
+const render = (elements, i18n, UIstate) => (path, value) => {
   if (path === 'form.error') {
     renderError(elements, i18n, value);
   }
@@ -108,7 +114,7 @@ const render = (elements, i18n) => (path, value) => {
     renderFeeds(elements, i18n, value);
   }
   if (path === 'posts') {
-    renderPosts(elements, i18n, value);
+    renderPosts(elements, i18n, value, UIstate);
   }
 };
 
