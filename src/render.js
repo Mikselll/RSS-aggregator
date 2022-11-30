@@ -1,3 +1,6 @@
+/* eslint-disable no-fallthrough */
+import onChange from 'on-change';
+
 const renderError = (elements, i18n, error) => {
   if (error === null) {
     return;
@@ -65,7 +68,7 @@ const renderFeeds = (elements, i18n, feeds) => {
   });
 };
 
-const renderPosts = (elements, i18n, posts, UIstate) => {
+const renderPosts = (state, elements, i18n, posts) => {
   elements.posts.textContent = '';
   buildList(elements.posts, i18n.t('posts'));
   const ul = elements.posts.querySelector('.list-group');
@@ -80,7 +83,7 @@ const renderPosts = (elements, i18n, posts, UIstate) => {
     link.setAttribute('target', '_blank');
     link.setAttribute('rel', 'noopener noreferrer');
     link.textContent = post.title;
-    if (UIstate.postsId.includes(post.id)) {
+    if (state.UIstate.postsId.includes(post.id)) {
       link.classList.add('fw-normal', 'link-secondary');
     } else {
       link.classList.add('fw-bold');
@@ -99,7 +102,18 @@ const renderPosts = (elements, i18n, posts, UIstate) => {
   });
 };
 
-const render = (elements, i18n, UIstate) => (path, value) => {
+const renderModal = (state, elements) => {
+  const link = document.querySelector(`[data-id="${state.UIstate.currentPostId}"]`);
+  link.removeAttribute('class');
+  link.classList.add('fw-normal', 'link-secondary');
+
+  const currentPost = state.posts.flat().find((post) => post.id === state.UIstate.currentPostId);
+  elements.modalTitle.textContent = currentPost.title;
+  elements.modalBody.textContent = currentPost.description;
+  elements.modalLink.setAttribute('href', currentPost.link);
+};
+
+const render = (state, elements, i18n) => onChange(state, (path, value) => {
   switch (path) {
     case 'form.error':
       renderError(elements, i18n, value);
@@ -111,11 +125,14 @@ const render = (elements, i18n, UIstate) => (path, value) => {
       renderFeeds(elements, i18n, value);
       break;
     case 'posts':
-      renderPosts(elements, i18n, value, UIstate);
+      renderPosts(state, elements, i18n, value);
+      break;
+    case 'UIstate.currentPostId':
+      renderModal(state, elements);
       break;
     default:
       break;
   }
-};
+});
 
 export default render;

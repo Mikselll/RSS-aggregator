@@ -1,8 +1,6 @@
-import onChange from 'on-change';
 import * as yup from 'yup';
 import i18next from 'i18next';
 import render from './render.js';
-import renderModal from './renderModal.js';
 import loader from './loader.js';
 import updater from './updater.js';
 import resources from './locales/index.js';
@@ -42,12 +40,7 @@ const app = () => {
     modalLink: document.querySelector('.full-article'),
   };
 
-  const UIstate = {
-    currentPostId: null,
-    postsId: [],
-  };
-
-  const state = onChange({
+  const state = {
     form: {
       processState: 'filling',
       links: [],
@@ -55,32 +48,37 @@ const app = () => {
     },
     feeds: [],
     posts: [],
-  }, render(elements, i18n, UIstate));
+    UIstate: {
+      currentPostId: null,
+      postsId: [],
+    },
+  };
+
+  const watchedState = render(state, elements, i18n);
 
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
-    state.form.processState = 'filling';
-    validate(elements.field.value, state.form.links)
+    watchedState.form.processState = 'filling';
+    validate(elements.field.value, watchedState.form.links)
       .then((url) => {
         elements.field.value = '';
-        state.form.processState = 'loading';
-        state.form.error = null;
-        loader(url, state);
+        watchedState.form.processState = 'loading';
+        watchedState.form.error = null;
+        loader(url, watchedState);
       })
       .catch((error) => {
-        state.form.processState = 'error';
-        state.form.error = error.message;
+        watchedState.form.processState = 'error';
+        watchedState.form.error = error.message;
       });
   });
 
   elements.posts.addEventListener('click', (e) => {
     const { id } = e.target.dataset;
-    UIstate.postsId.push(id);
-    UIstate.currentPostId = id;
-    renderModal(state, UIstate, elements);
+    watchedState.UIstate.postsId.push(id);
+    watchedState.UIstate.currentPostId = id;
   });
 
-  updater(state);
+  updater(watchedState);
 };
 
 export default app;
