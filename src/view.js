@@ -1,4 +1,3 @@
-/* eslint-disable no-fallthrough */
 import onChange from 'on-change';
 
 const renderError = (elements, i18n, error) => {

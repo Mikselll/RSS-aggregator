@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 import i18next from 'i18next';
-import render from './render.js';
+import view from './view.js';
 import loader from './loader.js';
 import updater from './updater.js';
 import resources from './locales/index.js';
@@ -54,7 +54,7 @@ const app = () => {
     },
   };
 
-  const watchedState = render(state, elements, i18n);
+  const watchedState = view(state, elements, i18n);
 
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
