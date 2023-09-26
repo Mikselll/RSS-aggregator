@@ -29,6 +29,7 @@ const app = () => {
   });
 
   const elements = {
+    false: 1,
     form: document.querySelector('.rss-form'),
     field: document.querySelector('#url-input'),
     button: document.querySelector('.btn-lg'),
